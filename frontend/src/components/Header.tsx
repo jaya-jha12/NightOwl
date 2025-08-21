@@ -1,4 +1,4 @@
-import logo from '../assets/logo1.png';
+//import logo from '../public/animal.png';
 import '../App.css';
 import { Home, PenTool, BookOpen, LogIn } from "lucide-react";
 import { useState } from "react";
@@ -20,9 +20,9 @@ export const Header = () => {
       {/* Left: Logo + Brand */}
       <div className="flex items-center space-x-2">
         <img
-          src={logo}
+          src='/animal.png'
           alt="NightOwl Logo"
-          className="h-10 w-12"
+          className="h-12 w-12"
         />
         <span className="text-xl font-bold tracking-wide font-serif">NightOwl</span>
       </div>
@@ -64,7 +64,7 @@ export const Header = () => {
         </Link>
         <Link
           to="/get-started"
-          className="bg-green-500 hover:bg-green-600 text-black px-4 py-2 rounded-lg font-medium transition"
+          className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-medium transition"
         >
           Get Started
         </Link>

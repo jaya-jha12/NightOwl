@@ -30,8 +30,7 @@ export const BlogCard: React.FC<BlogCardProps> = ({
                 const target = e.target as HTMLImageElement;
                 target.onerror = null; 
                 target.src='https://placehold.co/600x400/282828/FFFFFF?text=Image+Not+Found';
-                }}
-            />
+                }}/>
             <div className="p-6">
             {/* Tag */}
             <span className="inline-block bg-green-800 text-green-200 text-xs font-semibold px-3 py-1 rounded-full mb-4">

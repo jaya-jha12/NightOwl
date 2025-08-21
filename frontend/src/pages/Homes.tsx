@@ -1,5 +1,6 @@
 import { PenTool, Coffee,TrendingUp } from "lucide-react";
 import { BlogCard } from '../components/BlogCard';
+import { GiOwl } from "react-icons/gi";
 
 export const Home=()=>{
     const blogPosts: BlogCardProps[] = [
@@ -34,8 +35,8 @@ export const Home=()=>{
     return <div className="py-18">
         <div className=" flex flex-col items-center justify-center text-center px-6 pt-20 pr-3 pl-3">
       {/* Icon at top */}
-      <div className="bg-green-500 p-4 rounded-2xl mb-6">
-        <PenTool className="w-10 h-10 text-white" />
+      <div className=" pb-4 rounded-2xl mb-6">
+        <img src='/animal.png' alt='NightOwl logo' className='w-30 h-30' />
       </div>
 
       {/* Title */}
