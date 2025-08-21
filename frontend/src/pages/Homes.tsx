@@ -32,7 +32,7 @@ export const Home=()=>{
       readTimeInMinutes: 12,
     }
   ];
-    return <div className="py-18">
+    return <div className="py-10">
         <div className=" flex flex-col items-center justify-center text-center px-6 pt-20 pr-3 pl-3">
       {/* Icon at top */}
       <div className=" pb-4 rounded-2xl mb-6">
