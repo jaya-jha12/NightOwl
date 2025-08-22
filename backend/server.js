@@ -13,5 +13,5 @@ const port=process.env.PORT || 5000;
 
 
 app.listen(port,(error)=>{
-    error? console.error(`Error ${port}`) : (console.log(`app is listening at the port ${port}`))
+    error? console.error(`Error ${port}`) : (console.log(`App is listening at the port ${port}`))
 });

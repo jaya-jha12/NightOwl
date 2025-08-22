@@ -1,10 +1,10 @@
 import express from 'express';
-import { createBlog,editBlog,deleteBlog,getBlogs } from '../controllers/BlogController';
-import { authenticate } from '../middleware/authMiddleware';
+import { createBlog,editBlog,deleteBlog,getBlogs } from '../controllers/BlogController.js';
+import { authenticate } from '../middleware/authMiddleware.js';
 
 const router=express.Router();
 
-router.post("/",authenticate, createBlog);
+router.post("/create",authenticate, createBlog);
 router.get("/",authenticate, getBlogs);
 router.put("/:id",authenticate, editBlog);
 router.delete("/:id",authenticate, deleteBlog);

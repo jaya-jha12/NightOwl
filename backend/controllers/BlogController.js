@@ -1,14 +1,14 @@
-import { prisma } from '../lib/prismaClient';
+import { prisma } from '../lib/prismaClient.js';
 
 export const createBlog = async (req, res) => {
   try {
-    const { title, content, isDraft } = req.body;
+    const { title, content, draft } = req.body;
 
     const blog = await prisma.blog.create({
       data: {
         title,
         content,
-        isDraft: isDraft ?? false,   // allow drafts
+        draft: draft ?? false,   // allow drafts
         authorId: req.user.id        // comes from JWT middleware
       }
     });
@@ -22,7 +22,7 @@ export const createBlog = async (req, res) => {
 export const editBlog = async (req, res) => {
   try {
     const { id } = req.params; // blog id
-    const { title, content, isDraft } = req.body;
+    const { title, content, draft } = req.body;
 
     // Ensure only the author can edit
     const blog = await prisma.blog.findUnique({ where: { id: Number(id) } });
@@ -31,7 +31,7 @@ export const editBlog = async (req, res) => {
 
     const updatedBlog = await prisma.blog.update({
       where: { id: Number(id) },
-      data: { title, content, isDraft }
+      data: { title, content, draft }
     });
 
     return res.json(updatedBlog);
