@@ -8,6 +8,7 @@ import { Home } from './pages/Homes';
 import { Write } from './pages/Write';
 import { Toaster } from "react-hot-toast"; 
 import { MyBlogs } from './pages/MyBlog';
+import { Auth } from './pages/Auth';
 
 function App() {
 
@@ -19,6 +20,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/write" element={<Write />} />
           <Route path="/blogs" element={<MyBlogs totalArticles={10} published={7} drafts={3} totalViews={1200}/>} />
+          <Route path="/login" element={<Auth />} />
         </Routes>
       <Toaster position="bottom-right" reverseOrder={false} />
     </div>

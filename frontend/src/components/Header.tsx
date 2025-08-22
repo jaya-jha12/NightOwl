@@ -57,10 +57,10 @@ export const Header = () => {
       {/* Right: Auth Buttons */}
       <div className="flex items-center space-x-5">
         <Link
-          to="/signin"
+          to="/login"
           className="flex items-center space-x-1 px-3 py-1 rounded-lg hover:text-green-500 hover:bg-zinc-900"
         >
-          <LogIn size={18} /> <span>Sign In</span>
+          <LogIn size={18} /> <span>Log In</span>
         </Link>
         <Link
           to="/get-started"

@@ -73,7 +73,7 @@ export const Auth:FC=()=>{
                             className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
                             activeTab === 'signin' ? 'bg-green-500 text-gray-900' : 'text-gray-300 hover:bg-gray-700'
                             }`}>
-                            Sign In
+                            Log In
                         </button>
                         <button
                             onClick={() => setActiveTab("signup")}
