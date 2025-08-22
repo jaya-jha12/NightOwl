@@ -55,7 +55,7 @@ export const deleteBlog= async (req,res)=>{
     }
 }
 
-export const getUserBlogs = async (req, res) => {
+export const getBlogs = async (req, res) => {
   try {
     // userId comes from the authenticate middleware
     const userId = req.user.id;
