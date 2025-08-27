@@ -1,8 +1,32 @@
 import { PenTool, Coffee,TrendingUp } from "lucide-react";
 import { BlogCard } from '../components/BlogCard';
-import { GiOwl } from "react-icons/gi";
+import { useState,useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
+
+interface BlogCardProps {
+  imageUrl: string;
+  tag: string;
+  title: string;
+  description: string;
+  author: string;
+  date: string;
+  readTimeInMinutes: number;
+}
 export const Home=()=>{
+  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
+  const navigate=useNavigate();
+  useEffect(() => {
+      setIsLoggedIn(!!localStorage.getItem("token"));
+    }, [location]);
+
+  const handleStartWriting = () => {
+    if (isLoggedIn) {
+      navigate("/write"); // go to write blog
+    } else {
+      navigate("/login"); // go to login/signup
+    }
+  };
     const blogPosts: BlogCardProps[] = [
     {
       imageUrl: 'https://images.unsplash.com/photo-1542831371-29b0f74f9713?q=80&w=2070&auto=format&fit=crop',
@@ -54,19 +78,26 @@ export const Home=()=>{
 
       {/* Buttons */}
       <div className="flex gap-4">
-        <button className="flex items-center gap-2 px-6 py-3 bg-green-500 text-white font-medium rounded-2xl  hover:bg-green-600  shadow-[0_0_30px_rgba(34,197,94,0.7)] hover:shadow-[0_0_25px_rgba(200,200,200,0.8)] transition duration-300">
+        <button className="flex items-center gap-2 px-6 py-3 bg-green-500 text-white font-medium rounded-2xl  hover:bg-green-600  shadow-[0_0_30px_rgba(34,197,94,0.7)] hover:shadow-[0_0_25px_rgba(200,200,200,0.8)] transition duration-300"
+        onClick={handleStartWriting}>
           <PenTool className="w-5 h-5" />
           Start Writing
         </button>
 
-        <button className="flex items-center gap-2 px-6 py-3 bg-black border border-gray-700 text-white font-medium rounded-2xl hover:bg-zinc-800 shadow-[0_0_15px_rgba(200,200,200,0.5)] hover:shadow-[0_0_25px_rgba(200,200,200,0.8)] transition duration-300">
+        <button className="flex items-center gap-2 px-6 py-3 bg-black border border-gray-700 text-white font-medium rounded-2xl hover:bg-zinc-800 shadow-[0_0_15px_rgba(200,200,200,0.5)] hover:shadow-[0_0_25px_rgba(200,200,200,0.8)] transition duration-300"
+          onClick={() => {
+            const section = document.getElementById("trending-stories");
+            if (section) {
+              section.scrollIntoView({ behavior: "smooth" });
+            }
+          }}>
           <Coffee className="w-5 h-5" />
           Explore Stories
         </button>
       </div>
     </div>
     {/* Trending section */}
-    <div className="bg-black text-white py-16 px-8 mt-12 flex flex-col">
+    <div id="trending-stories" className="bg-black text-white py-16 px-8 mt-12 flex flex-col">
         <div className="flex items-center space-x-2 mb-8">
         <TrendingUp className="w-10 h-12 text-green-500" />
         <h2 className="text-3xl font-bold font-serif tracking-wide">Trending Stories</h2>

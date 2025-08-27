@@ -4,6 +4,7 @@ import { Eye, EyeOff, Mail, Lock, User, ArrowRight } from "lucide-react";
 import toast from "react-hot-toast";
 import OwlIcon from "/animal.png";
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 interface InputFieldProps {
   id: string;
@@ -50,6 +51,7 @@ export const Auth:FC=()=>{
     const [email,setEmail]=useState("");
     const [password,setPassword]=useState("");
     const [confirmPassword,setConfirmPassword]=useState("");
+    const navigate=useNavigate();
 
 
     const handleSubmit=async (e:React.FormEvent)=>{
@@ -70,6 +72,7 @@ export const Auth:FC=()=>{
                     setIsLoading(false);
                     toast.success(message);
                     }, 1000);
+                navigate('/');
             }catch (err:any){
                 console.error(err);
                 const message = err.response?.data?.message || "Signup failed!";
@@ -90,6 +93,7 @@ export const Auth:FC=()=>{
                     setIsLoading(false);
                     toast.success(message);
                     }, 1000);
+                navigate('/')
             }catch (err:any){
                 console.error("error:",err);
                 console.error(err);
