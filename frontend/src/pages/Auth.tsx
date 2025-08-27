@@ -3,6 +3,7 @@ import type { FC } from 'react';
 import { Eye, EyeOff, Mail, Lock, User, ArrowRight } from "lucide-react";
 import toast from "react-hot-toast";
 import OwlIcon from "/animal.png";
+import axios from 'axios';
 
 interface InputFieldProps {
   id: string;
@@ -12,9 +13,10 @@ interface InputFieldProps {
   icon: React.ElementType;
   showPassword?: boolean;
   onTogglePassword?: () => void;
+  onChange?:(e:any)=>void;
 }
 
-const InputField: FC<InputFieldProps> = ({ id, label, type, placeholder, icon: Icon, showPassword, onTogglePassword }) => (
+const InputField: FC<InputFieldProps> = ({ id, label, type, placeholder, icon: Icon, showPassword, onTogglePassword,onChange }) => (
   <div className="space-y-2">
     <label htmlFor={id} className="text-sm font-medium text-gray-300">{label}</label>
     <div className="relative">
@@ -23,6 +25,7 @@ const InputField: FC<InputFieldProps> = ({ id, label, type, placeholder, icon: I
         id={id}
         type={type}
         placeholder={placeholder}
+        onChange={onChange}
         className="w-full pl-10 pr-10 py-2 bg-zinc-900 border border-zinc-700 rounded-md text-white focus:border-green-500 focus:ring-2 focus:ring-green-500/20 focus:outline-none transition-colors"
         required/>
       {onTogglePassword && (
@@ -43,17 +46,59 @@ export const Auth:FC=()=>{
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [showPassword, setShowPassword] = useState<boolean>(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
+    const [name,setName]=useState("");
+    const [email,setEmail]=useState("");
+    const [password,setPassword]=useState("");
+    const [confirmPassword,setConfirmPassword]=useState("");
 
-    const handleSubmit=(e:React.FormEvent)=>{
+
+    const handleSubmit=async (e:React.FormEvent)=>{
         e.preventDefault();
         setIsLoading(true);
-
-        setTimeout(() => {
-        setIsLoading(false);
-        toast.success(
-            activeTab === "signin" ? "Signed in successfully!" : "Account created!"
-        );
-        }, 1000);
+        if(activeTab=="signup"){
+            try{
+                const response=await axios.post(`http://localhost:3000/api/user/register`,{
+                    name:name,
+                    email:email,
+                    password:password,
+                    confirmPassword:confirmPassword
+                })
+                const message = response.data?.message
+                console.log("response:",response.data);
+                localStorage.setItem("token",response.data.token);
+                setTimeout(() => {
+                    setIsLoading(false);
+                    toast.success(message);
+                    }, 1000);
+            }catch (err:any){
+                console.error(err);
+                const message = err.response?.data?.message || "Signup failed!";
+                toast.error(message);
+            }finally{
+                setIsLoading(false);
+            }
+        }else{
+            try{
+                const response=await axios.post(`http://localhost:3000/api/user/login`,{
+                    email:email,
+                    password:password
+                })
+                const message = response.data?.message
+                console.log("response:",response.data);
+                localStorage.setItem("token",response.data.token);
+                setTimeout(() => {
+                    setIsLoading(false);
+                    toast.success(message);
+                    }, 1000);
+            }catch (err:any){
+                console.error("error:",err);
+                console.error(err);
+                const message = err.response?.data?.message || "Signin failed!";
+                toast.error(message);
+            }finally{
+                setIsLoading(false);
+            }
+        }
   };
     return (
         <div className="min-h-screen bg-gradient-to-b from-black via-[#001a00] to-green-900 flex items-center justify-center p-4 font-sans overflow-auto">
@@ -84,10 +129,10 @@ export const Auth:FC=()=>{
                         </button>
                         </div>
                         {/* --- Form --- */}
-                        <form onSubmit={handleSubmit} className="space-y-4">
+                        <form  className="space-y-4">
                         {activeTab === 'signin' ? (
                             <>
-                            <InputField id="signin-email" label="Email" type="email" placeholder="Enter your email" icon={Mail} />
+                            <InputField id="signin-email" label="Email" type="email" placeholder="Enter your email" icon={Mail} onChange={(e)=>{setEmail(e.target.value)}}/>
                             <InputField 
                                 id="signin-password" 
                                 label="Password" 
@@ -95,12 +140,13 @@ export const Auth:FC=()=>{
                                 placeholder="Enter your password" 
                                 icon={Lock}
                                 showPassword={showPassword}
-                                onTogglePassword={() => setShowPassword(!showPassword)}/>
+                                onTogglePassword={() => setShowPassword(!showPassword)}
+                                onChange={(e)=>{setPassword(e.target.value)}}/>
                             </>
                         ) : (
                             <>
-                            <InputField id="signup-name" label="Full Name" type="text" placeholder="Enter your full name" icon={User} />
-                            <InputField id="signup-email" label="Email" type="email" placeholder="Enter your email" icon={Mail} />
+                            <InputField id="signup-name" label="Full Name" type="text" placeholder="Enter your full name" icon={User} onChange={(e)=>{setName(e.target.value)}} />
+                            <InputField id="signup-email" label="Email" type="email" placeholder="Enter your email" icon={Mail} onChange={(e)=>{setEmail(e.target.value)}} />
                             <InputField 
                                 id="signup-password" 
                                 label="Password" 
@@ -109,6 +155,7 @@ export const Auth:FC=()=>{
                                 icon={Lock}
                                 showPassword={showPassword}
                                 onTogglePassword={() => setShowPassword(!showPassword)}
+                                onChange={(e)=>{setPassword(e.target.value)}}
                             />
                             <InputField 
                                 id="signup-confirm-password" 
@@ -117,14 +164,17 @@ export const Auth:FC=()=>{
                                 placeholder="Confirm your password" 
                                 icon={Lock}
                                 showPassword={showConfirmPassword}
-                                onTogglePassword={() => setShowConfirmPassword(!showConfirmPassword)}/>
+                                onTogglePassword={() => setShowConfirmPassword(!showConfirmPassword)}
+                                onChange={(e)=>{setConfirmPassword(e.target.value)}}
+                                />
                             </>
                         )}
 
                         <button
                             type="submit"
                             className="w-full bg-green-500 hover:bg-green-700 text-white font-semibold py-2.5 rounded-md shadow-lg hover:shadow-green-500/20 transition-all duration-300 flex items-center justify-center"
-                            disabled={isLoading}>
+                            disabled={isLoading}
+                            onClick={handleSubmit}>
                             {isLoading ? (
                             <>
                                 <div className="w-4 h-4 border-2 border-gray-900/30 border-t-gray-900 rounded-full animate-spin mr-2" />
