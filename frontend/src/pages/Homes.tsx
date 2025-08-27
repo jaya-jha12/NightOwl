@@ -114,8 +114,10 @@ export const Home=()=>{
           <div className="font-bold text-4xl font-serif mb-6">Ready to Share Your Story?</div>
           <div className="text-gray-300 text-xl mb-8">Join thousands of writers who are sharing their knowledge and experiences.<br/>Your voice matters in the community.</div>
           <div className="flex gap-4 items-center justify-center p-3">
-            <button className="flex items-center gap-2 px-6 py-3 bg-green-500 text-white font-medium rounded-2xl  hover:bg-green-600  shadow-[0_0_30px_rgba(34,197,94,0.7)] hover:shadow-[0_0_25px_rgba(200,200,200,0.8)] transition duration-300">Create Account</button>
-          <button className="flex items-center gap-2 px-6 py-3 bg-black border border-gray-700 text-white font-medium rounded-2xl hover:bg-zinc-800 shadow-[0_0_15px_rgba(200,200,200,0.5)] hover:shadow-[0_0_25px_rgba(200,200,200,0.8)] transition duration-300">Sign In</button>
+            <button className="flex items-center gap-2 px-6 py-3 bg-green-500 text-white font-medium rounded-2xl  hover:bg-green-600  shadow-[0_0_30px_rgba(34,197,94,0.7)] hover:shadow-[0_0_25px_rgba(200,200,200,0.8)] transition duration-300"
+            onClick={()=>navigate('/login')}>Create Account</button>
+          <button className="flex items-center gap-2 px-6 py-3 bg-black border border-gray-700 text-white font-medium rounded-2xl hover:bg-zinc-800 shadow-[0_0_15px_rgba(200,200,200,0.5)] hover:shadow-[0_0_25px_rgba(200,200,200,0.8)] transition duration-300"
+          onClick={()=>navigate('/login')}>Sign In</button>
           </div>
           
     </div>
