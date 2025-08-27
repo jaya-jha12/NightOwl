@@ -2,13 +2,14 @@ import { prisma } from '../lib/prismaClient.js';
 
 export const createBlog = async (req, res) => {
   try {
-    const { title, content, draft } = req.body;
+    const { title, content, draft,category } = req.body;
 
     const blog = await prisma.blog.create({
       data: {
         title,
         content,
         draft: draft ?? false,   // allow drafts
+        category,
         authorId: req.user.id        // comes from JWT middleware
       }
     });
@@ -22,7 +23,7 @@ export const createBlog = async (req, res) => {
 export const editBlog = async (req, res) => {
   try {
     const { id } = req.params; // blog id
-    const { title, content, draft } = req.body;
+    const { title, content, draft,category } = req.body;
 
     // Ensure only the author can edit
     const blog = await prisma.blog.findUnique({ where: { id: Number(id) } });
@@ -31,7 +32,7 @@ export const editBlog = async (req, res) => {
 
     const updatedBlog = await prisma.blog.update({
       where: { id: Number(id) },
-      data: { title, content, draft }
+      data: { title, content, draft,category }
     });
 
     return res.json(updatedBlog);
@@ -61,13 +62,19 @@ export const getBlogs = async (req, res) => {
     const userId = req.user.id;
 
     // extract filter (draft/published) if provided
-    const { status } = req.query; // status=draft OR status=published
+    const { status,category } = req.query; // status=draft OR status=published
 
     const whereCondition = { authorId: userId };
     
     // add filter only if status is provided
-    if (status) {
-      whereCondition.status = status;  
+    if (status === "draft") {
+      whereCondition.draft = true;
+    }else if (status === "published") {
+      whereCondition.draft = false;
+    }
+    //  add category filter if provided
+    if (category) {
+      whereCondition.category = category;
     }
 
     const blogs = await prisma.blog.findMany({

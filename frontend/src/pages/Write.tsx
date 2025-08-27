@@ -1,6 +1,7 @@
 import { Calendar,User,Save, Send,Tag,PenTool, Eye } from "lucide-react";
 import { useState } from 'react';
 import { toast } from "react-hot-toast";
+import axios from 'axios';
 
 export const Write=()=>{
     const today = new Date().toLocaleDateString();
@@ -15,23 +16,68 @@ export const Write=()=>{
         .map((tag) => tag.trim())
         .filter((tag) => tag.length > 0);
 
-    const handleSaveDraft = () => {
-        toast.success("Draft saved! ✨", {
-        duration: 3000,
-        style: {
-            background: "#333",
-            color: "#0f0", // green text
-        },
-        });
+    const handleSaveDraft = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            await axios.post(
+            "http://localhost:3000/api/blog/create",
+            {
+                title,
+                content,
+                draft: true,
+                category,
+            },
+            {
+                headers: {
+                Authorization: `Bearer ${token}`,
+                },
+            }
+            );
+            toast.success("Draft saved! ✨", {
+                duration: 3000,
+                style: {
+                    background: "#333",
+                    color: "#0f0", // green text
+                },
+            });
+            setTitle("");
+            setContent("");
+            setCategory("");
+            setTags("");
+        } catch (error:any) {
+            const errMsg =
+            error.response?.data?.message || "Failed to save draft. Please try again.";
+            toast.error(errMsg);
+            console.error(error);
+        }
+        
     };
-    const handlePublish = () => {
-        toast.success("Your Blog published! ✨", {
-        duration: 3000,
-        style: {
-            background: "#333",
-            color: "#0f0", // green text
+    const handlePublish = async () => {
+    try {
+        const token = localStorage.getItem("token");
+        await axios.post(
+        "http://localhost:3000/api/blog/create",
+        {
+            title,
+            content,
+            category,
+            draft: false,
         },
-        });
+        {
+            headers: { Authorization: `Bearer ${token}` },
+        }
+        );
+        toast.success("Blog published successfully 🎉");
+        // reset form fields
+        setTitle("");
+        setContent("");
+        setCategory("");
+        setTags("");
+    } catch (error:any) {
+            const errMsg =
+            error.response?.data?.message || "Failed to publish blog. Please try again.";
+            toast.error(errMsg);
+        }
     };
     return ( <div className=" bg-black text-white flex">
         {/* Left Sidebar */}
