@@ -19,7 +19,7 @@ export const BlogCard: React.FC<BlogCardProps> = ({
   readTimeInMinutes,
 }) => {
     return (
-        <div className="max-w-sm w-full rounded-xl bg-gradient-to-b from-white/10 via-transparent to-transparent p-px transform hover:scale-105 transition-transform duration-300">
+        <div className="max-w-sm w-full rounded-xl bg-gradient-to-b from-white/10 via-transparent to-transparent p-px transform hover:scale-105 transition-transform duration-300 z-0">
             <div className="w-full h-full bg-[#282828] text-white rounded-[11px] overflow-hidden">
             {/* Card Image */}
             <img 

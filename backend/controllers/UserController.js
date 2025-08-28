@@ -1,12 +1,34 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { prisma } from '../lib/prismaClient.js';
+import { z } from "zod";
+
+// Registration schema
+export const registerSchema = z.object({
+  name: z.string().min(1, "Full Name is required"),
+  email: z.email("Invalid email address"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+  confirmPassword: z.string().min(6, "Confirm Password is required"),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords do not match",
+  path: ["confirmPassword"], // shows error on confirmPassword field
+});
+
+// Login schema
+export const loginSchema = z.object({
+  email: z.email("Invalid email address"),
+  password: z.string("Password is required"),
+});
 
 const JWT_SECRET = process.env.JWT_SECRET || "supersecret";
 
 export const registerUser=async (req,res)=>{
     try{
-        const { name,email,password,confirmPassword } =req.body;
+        const validatedData = registerSchema.safeParse(req.body);
+        if(!validatedData.success){
+            return res.status(409).json({"msg":"Incorrect inputs"});
+        }
+        const { name,email,password,confirmPassword } =validatedData.data;
         // check if passwords match
         if (password !== confirmPassword) {
             return res.status(400).json({ message: "Passwords do not match" });
@@ -49,7 +71,12 @@ export const registerUser=async (req,res)=>{
 
 export const loginUser=async (req,res)=>{
     try{
-        const { email, password } = req.body;
+        const validatedData = loginSchema.safeParse(req.body);
+        if(!validatedData.success){
+            return res.status(409).json({"msg":"Incorrect inputs"});
+        }
+        const { email, password } =validatedData.data;
+        
         // check if user exists
         const user = await prisma.user.findUnique({ where: { email } });
             if (!user) {
@@ -77,7 +104,7 @@ export const loginUser=async (req,res)=>{
         });
     }catch(error){
         console.error("Login error:", error);
-        res.status(500).json({ message: "Server error" });
+        res.status(500).json({ message: "Server error" })
     }
 }
 
