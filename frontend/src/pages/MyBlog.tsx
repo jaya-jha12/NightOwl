@@ -2,8 +2,9 @@ import { PenTool, FileEdit, Eye, ExternalLink } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
 import { StatsCard } from '../components/StatsCard';
 import { SearchBar } from '../components/SearchBar';
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { MyBlogCard } from '../components/MyBlogCard';
+import axios from 'axios';
 
 type BlogStats = {
   totalArticles: number;
@@ -25,6 +26,11 @@ type Blog = {
   comments: number;
 };
 
+function generateExcerpt(content: string, length: number = 150): string {
+  if (!content) return "";
+  return content.length > length ? content.substring(0, length) + "..." : content;
+}
+
 export const MyBlogs: React.FC<BlogStats> = ({
   totalArticles,
   published,
@@ -32,61 +38,53 @@ export const MyBlogs: React.FC<BlogStats> = ({
   totalViews,
 }) => {
     const [query, setQuery] = useState("");
+    const [blogs, setBlogs] = useState<Blog[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [stats, setStats] = useState({ totalArticles: 0, published: 0, drafts: 0, totalViews: 0 });
     const navigate=useNavigate();
     const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         setQuery(e.target.value);
         // TODO: filter blogs list using query
     };
-    const blogs: Blog[] = [
-        {
-        id: 1,
-        title: 'Building Modern React Applications with TypeScript',
-        excerpt: 'A comprehensive guide to creating scalable React apps using TypeScript, covering best practices and advanced patterns.',
-        image: 'https://images.unsplash.com/photo-1633356122102-3fe601e05bd2?q=80&w=1000&auto=format=fit=crop',
-        status: 'Published',
-        publishedDate: '1/15/2024',
-        readTime: '8 min read',
-        views: 1240,
-        likes: 89,
-        comments: 23,
-        },
-        {
-        id: 4,
-        title: 'Mastering Git: Advanced Tips and Tricks',
-        excerpt: 'Take your Git skills to the next level with advanced commands, workflows, and best practices for team collaboration.',
-        image: 'https://images.unsplash.com/photo-1556075798-4825dfaaf498?q=80&w=1000&auto=format=fit=crop',
-        status: 'Draft',
-        publishedDate: '',
-        readTime: '9 min read',
-        views: 0,
-        likes: 0,
-        comments: 0,
-        },
-        {
-        id: 2,
-        title: 'A Deep Dive into State Management with Zustand',
-        excerpt: 'Explore the simplicity and power of Zustand for state management in React. A lightweight alternative to Redux.',
-        image: 'https://images.unsplash.com/photo-1579403124614-197f69d8187b?q=80&w=1000&auto=format=fit=crop',
-        status: 'Published',
-        publishedDate: '2/28/2024',
-        readTime: '6 min read',
-        views: 980,
-        likes: 112,
-        comments: 41,
-        },
-        {
-        id: 3,
-        title: 'Styling React Components with Tailwind CSS',
-        excerpt: 'Learn how to rapidly build modern websites without ever leaving your HTML, using the utility-first framework Tailwind CSS.',
-        image: 'https://images.unsplash.com/photo-1617042375876-a13e36732a04?q=80&w=1000&auto=format=fit=crop',
-        status: 'Published',
-        publishedDate: '3/10/2024',
-        readTime: '12 min read',
-        views: 2500,
-        likes: 345,
-        comments: 98,
+    useEffect(() => {
+        const fetchBlogs = async () => {
+        try {
+            const token = localStorage.getItem("token"); // you store token after login
+            const res = await axios.get("http://localhost:3000/api/blog/", {
+            headers: { Authorization: `Bearer ${token}` }
+            });
+            const transformedBlogs: Blog[] = res.data.map((blog: any) => ({
+                id: blog.id,
+                title: blog.title,
+                excerpt: generateExcerpt(blog.content),
+                status: blog.draft ? "Draft" : "Published",
+                publishedDate: new Date(blog.createdAt).toLocaleDateString(),
+                readTime: blog.readTime || "5 min read",
+                views: blog.views || 0,
+                likes: blog.likes || 0,
+                comments:blog.comments || 0,
+            }));
+            setBlogs(transformedBlogs);
+            console.log(transformedBlogs);
+            const totalArticles = transformedBlogs.length;
+            const published = transformedBlogs.filter(b => b.status === "Published").length;
+            const drafts = transformedBlogs.filter(b => b.status === "Draft").length;
+            const totalViews = transformedBlogs.reduce((acc, b) => acc + (b.views || 0), 0);
+
+            setStats({ totalArticles, published, drafts, totalViews });
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setLoading(false);
         }
-    ];
+        };
+        fetchBlogs();
+    }, []);
+    const filteredBlogs = blogs.filter(blog =>
+        blog.title.toLowerCase().includes(query.toLowerCase())
+    );
+    
+
     return (
         <div className="p-6 bg-black min-h-screen text-white">
             {/*Heading*/}
@@ -104,21 +102,24 @@ export const MyBlogs: React.FC<BlogStats> = ({
             </div>
             {/*Stats data*/}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <StatsCard title="Total Articles" value={totalArticles} icon={<FileEdit />} iconColor="text-green-500"/>
-                <StatsCard title="Published" value={published} icon={<ExternalLink />} iconColor="text-green-500"/>
-                <StatsCard title="Drafts" value={drafts} icon={<PenTool />} iconColor="text-yellow-400"/>
-                <StatsCard title="Total Views" value={totalViews} icon={<Eye />} iconColor="text-blue-400" />
+                <StatsCard title="Total Articles" value={stats.totalArticles} icon={<FileEdit />} iconColor="text-green-500"/>
+                <StatsCard title="Published" value={stats.published} icon={<ExternalLink />} iconColor="text-green-500"/>
+                <StatsCard title="Drafts" value={stats.drafts} icon={<PenTool />} iconColor="text-yellow-400"/>
+                <StatsCard title="Total Views" value={stats.totalViews} icon={<Eye />} iconColor="text-blue-400" />
             </div>
             {/* Search bar */}
             <div className="p-6 ">
                 <SearchBar placeholder='Search your articles' value={query} onChange={handleSearch} />
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                {blogs.map((blog) => (
-                <MyBlogCard key={blog.id} blog={blog} />
+            {/* Blog cards */}
+            {loading ? (
+                <p>Loading blogs...</p>
+            ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                {filteredBlogs.map((blog:any) => (
+                    <MyBlogCard key={blog.id} blog={blog} onDelete={()=>{}}/>
                 ))}
-            </div>
+                </div>
+            )}
         </div>
-            
-    
     )}

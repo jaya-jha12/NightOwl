@@ -24,20 +24,32 @@ type Blog = {
   comments: number;
 };
 
+function getRandomIndex<T>(arr: T[]): number {
+  if (arr.length === 0) return -1; // handle empty array
+  return Math.floor(Math.random() * arr.length);
+}
+
+
+const images: Array<string>=[
+    "https://images.unsplash.com/photo-1633356122102-3fe601e05bd2?q=80&w=1000&auto=format=fit=crop",
+    "https://images.unsplash.com/photo-1556075798-4825dfaaf498?q=80&w=1000&auto=format=fit=crop",
+    "https://images.unsplash.com/photo-1579403124614-197f69d8187b?q=80&w=1000&auto=format=fit=crop",
+    "https://images.unsplash.com/photo-1617042375876-a13e36732a04?q=80&w=1000&auto=format=fit=crop"
+]
+
 type MyBlogCardProps = {
   blog: Blog;
   onDelete: (id: number) => void; // Function to handle deletion
 };
 
 export const MyBlogCard = ({ blog,onDelete }:MyBlogCardProps) => {
-    const isPublished = blog.status === 'Published';
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     return (<div className="group bg-[#1e1e1e] border border-gray-700/50 rounded-2xl w-full max-w-sm shadow-lg font-sans flex flex-col">
             {/* Image container */}
             <div className="relative h-52 overflow-hidden">
                 <img 
-                    src={blog.image} 
+                    src={images[getRandomIndex(images)]} 
                     alt={blog.title}
                     className="w-full h-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-110"
                 />
@@ -48,7 +60,7 @@ export const MyBlogCard = ({ blog,onDelete }:MyBlogCardProps) => {
                 <div className="flex justify-between items-center mb-3">
                     {/* Dynamic status pill */}
                     <span className={`text-xs font-semibold px-3 py-1 rounded-full ${
-                        isPublished 
+                        blog.status=="Published"
                         ? 'bg-green-500/20 text-green-400' 
                         : 'bg-gray-500/20 text-gray-300'
                     }`}>
@@ -103,7 +115,7 @@ export const MyBlogCard = ({ blog,onDelete }:MyBlogCardProps) => {
                 <div className="flex items-center text-gray-400 text-sm mb-4">
                     <span className="flex items-center mr-4">
                         <CalendarDays className="w-4 h-4 mr-1.5" />
-                        {isPublished ? blog.publishedDate : 'Not published'}
+                        {blog.status=="Draft" || "Published" ? blog.publishedDate : 'Not published'}
                     </span>
                     <span className="flex items-center">
                         {blog.readTime}
@@ -112,7 +124,7 @@ export const MyBlogCard = ({ blog,onDelete }:MyBlogCardProps) => {
                 </div>
                 {/* --- Conditional Footer --- */}
                 <div className="border-t border-gray-700/50 pt-4 mt-auto">
-                    {isPublished ? (
+                    {blog.status=="Published"? (
                         <div className="flex items-center space-x-5 text-gray-300 text-sm">
                             <span className="flex items-center">
                                 <Eye className="w-4 h-4 mr-1.5 text-gray-400" />
