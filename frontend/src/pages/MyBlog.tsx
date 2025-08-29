@@ -31,12 +31,7 @@ function generateExcerpt(content: string, length: number = 150): string {
   return content.length > length ? content.substring(0, length) + "..." : content;
 }
 
-export const MyBlogs: React.FC<BlogStats> = ({
-  totalArticles,
-  published,
-  drafts,
-  totalViews,
-}) => {
+export const MyBlogs: React.FC<BlogStats> = () => {
     const [query, setQuery] = useState("");
     const [blogs, setBlogs] = useState<Blog[]>([]);
     const [loading, setLoading] = useState(true);
