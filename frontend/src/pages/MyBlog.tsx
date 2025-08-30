@@ -37,10 +37,6 @@ export const MyBlogs: React.FC<BlogStats> = () => {
     const [loading, setLoading] = useState(true);
     const [stats, setStats] = useState({ totalArticles: 0, published: 0, drafts: 0, totalViews: 0 });
     const [error,setError]=useState(null);
-    const [title, setTitle] = useState("");
-    const [content, setContent] = useState("");
-    const [tags, setTags] = useState("");
-    const [category, setCategory] = useState("");
     const navigate=useNavigate();
     const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         setQuery(e.target.value);
@@ -66,7 +62,7 @@ export const MyBlogs: React.FC<BlogStats> = () => {
             }));
             setBlogs(transformedBlogs);
             console.log(transformedBlogs);
-        } catch (err) {
+        } catch (err:any) {
             console.error(err);
         } finally {
             setLoading(false);
@@ -97,7 +93,7 @@ export const MyBlogs: React.FC<BlogStats> = () => {
 
         try {
             const token=localStorage.getItem("token");
-            const response = await axios.delete(`http://localhost:3000/api/blog/${id}`, {
+            await axios.delete(`http://localhost:3000/api/blog/${id}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 },
