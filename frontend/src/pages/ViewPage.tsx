@@ -11,9 +11,7 @@ import {
   User,
   Heart,
   MessageCircle,
-  Share2,
-  Bookmark,
-  Eye
+  Eye,
 } from 'lucide-react';
 
 type Blog={
@@ -77,7 +75,7 @@ export const ViewPage:React.FC =()=>{
     }, [id]);
     if (isLoading) {
         return (
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="min-h-screen bg-zinc-900 flex items-center justify-center text-white text-5xl">
             <p>Loading article...</p>
         </div>
         );
@@ -93,12 +91,12 @@ export const ViewPage:React.FC =()=>{
 
     if (!blog) {
         return (
-        <div className="h-full bg-gray-50 flex items-center justify-center">
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center ">
             <p>Article not found.</p>
         </div>
         );
     }
-    return <div className="bg-zinc-900 text-white font-serif">
+    return <div className="bg-zinc-900 text-white font-serif mt-8 mt-b-8 mr-20 ml-20">
         <main className="max-w-4xl mx-auto px-4 py-8">
             <Link
             to="/blogs"
@@ -127,14 +125,27 @@ export const ViewPage:React.FC =()=>{
                 <h1 className="text-4xl md:text-5xl font-extrabold text-green-500 mb-6">
                     {blog.title}
                 </h1>
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 ">
                     <div className="flex items-center">
                     <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center mr-4">
                         <User className="h-6 w-6 text-gray-500" />
                     </div>
-                    <div>
-                        <p className="font-semibold text-gray-900">{blog.author}</p>
-                        <p className="text-sm text-gray-500">Senior Developer</p>
+                    <div className="flex items-center justify-center gap-4 mb-8">
+                        <div>
+                            <p className="font-semibold text-gray-900">{blog.author}</p>
+                            <p className="text-sm text-gray-500">Senior Developer</p>
+                        </div>
+                        <div className="flex items-center justify-end gap-5">
+                            <div className="flex">
+                                <Heart className="w-4 h-4 mr-1.5" />
+                                {blog.likes.toLocaleString()}
+                            </div>
+                            <div className="flex">
+                                <MessageCircle className="w-4 h-4 mr-1.5" />
+                                {blog.comments.toLocaleString()}
+                            </div>
+                            
+                        </div>
                     </div>
                     </div>
                 </div>

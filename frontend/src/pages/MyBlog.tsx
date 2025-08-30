@@ -36,6 +36,7 @@ export const MyBlogs: React.FC<BlogStats> = () => {
     const [blogs, setBlogs] = useState<Blog[]>([]);
     const [loading, setLoading] = useState(true);
     const [stats, setStats] = useState({ totalArticles: 0, published: 0, drafts: 0, totalViews: 0 });
+    const [error,setError]=useState(null);
     const navigate=useNavigate();
     const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         setQuery(e.target.value);
@@ -78,7 +79,34 @@ export const MyBlogs: React.FC<BlogStats> = () => {
     const filteredBlogs = blogs.filter(blog =>
         blog.title.toLowerCase().includes(query.toLowerCase())
     );
-    
+    const handleDeleteBlog = async (id: number) => {
+        // Optional: Ask for confirmation before deleting
+        if (!window.confirm('Are you sure you want to delete this blog post?')) {
+            return;
+        }
+
+        setLoading(true);
+        setError(null);
+
+        try {
+            const token=localStorage.getItem("token");
+
+            const response = await axios.delete(`http://localhost:3000/api/blog/${id}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+            });
+            // If successful, update the state to remove the blog post
+            // This will cause React to re-render the component without the deleted item
+            setBlogs(currentBlogs => currentBlogs.filter(blog => blog.id !== id));
+
+        } catch (err:any) {
+            console.error("Deletion failed:", err);
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <div className="p-6 bg-black min-h-screen text-white">
@@ -112,7 +140,7 @@ export const MyBlogs: React.FC<BlogStats> = () => {
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
                 {filteredBlogs.map((blog:any) => (
-                    <MyBlogCard key={blog.id} blog={blog} onDelete={()=>{}}/>
+                    <MyBlogCard key={blog.id} blog={blog} onDelete={handleDeleteBlog}/>
                 ))}
                 </div>
             )}

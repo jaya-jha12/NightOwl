@@ -1,4 +1,4 @@
-import { useState,useMemo } from 'react';
+import { useState,useMemo,useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
     MoreHorizontal, 
@@ -49,6 +49,16 @@ export const MyBlogCard = ({ blog,onDelete }:MyBlogCardProps) => {
         const index = getRandomIndex(images);
         return images[index];
     }, []);
+    useEffect(() => {
+        const handleClickOutside = () => {
+            if (isMenuOpen) {
+                setIsMenuOpen(false);
+            }
+        };
+
+        window.addEventListener('click', handleClickOutside);
+        return () => window.removeEventListener('click', handleClickOutside);
+    }, [isMenuOpen]);
 
     return (<div className="group bg-[#1e1e1e] border border-gray-700/50 rounded-2xl w-full max-w-sm shadow-lg font-sans flex flex-col">
             {/* Image container */}
@@ -73,7 +83,9 @@ export const MyBlogCard = ({ blog,onDelete }:MyBlogCardProps) => {
                     </span>
                     <div className="relative">
                         <button 
-                            onClick={() => setIsMenuOpen((prev) => !prev)}
+                            onClick={(e:any) => {
+                                e.stopPropagation();
+                                setIsMenuOpen((prev) => !prev)}}
                             
                             className="text-gray-400 hover:text-white transition-colors p-1 rounded-full hover:bg-gray-700/50"
                         >
@@ -99,8 +111,7 @@ export const MyBlogCard = ({ blog,onDelete }:MyBlogCardProps) => {
                                                 onDelete(blog.id);
                                                 setIsMenuOpen(false);
                                             }}
-                                            className="w-full text-left flex items-center px-4 py-2 text-sm text-red-400 hover:bg-red-500/20"
-                                        >
+                                            className="w-full text-left flex items-center px-4 py-2 text-sm text-red-400 hover:bg-red-500/20">
                                             <Trash2 className="w-4 h-4 mr-2" /> Delete
                                         </button>
                                     </li>
