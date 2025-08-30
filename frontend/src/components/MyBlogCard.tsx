@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState,useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import { 
     MoreHorizontal, 
     CalendarDays, 
@@ -44,12 +45,16 @@ type MyBlogCardProps = {
 
 export const MyBlogCard = ({ blog,onDelete }:MyBlogCardProps) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const randomImage = useMemo(() => {
+        const index = getRandomIndex(images);
+        return images[index];
+    }, []);
 
     return (<div className="group bg-[#1e1e1e] border border-gray-700/50 rounded-2xl w-full max-w-sm shadow-lg font-sans flex flex-col">
             {/* Image container */}
             <div className="relative h-52 overflow-hidden">
                 <img 
-                    src={images[getRandomIndex(images)]} 
+                    src={randomImage}
                     alt={blog.title}
                     className="w-full h-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-110"
                 />
@@ -68,8 +73,8 @@ export const MyBlogCard = ({ blog,onDelete }:MyBlogCardProps) => {
                     </span>
                     <div className="relative">
                         <button 
-                            onClick={() => setIsMenuOpen(!isMenuOpen)}
-                            onBlur={() => setTimeout(() => setIsMenuOpen(false), 100)} // Close menu when it loses focus
+                            onClick={() => setIsMenuOpen((prev) => !prev)}
+                            
                             className="text-gray-400 hover:text-white transition-colors p-1 rounded-full hover:bg-gray-700/50"
                         >
                             <MoreHorizontal size={20} />
@@ -83,9 +88,10 @@ export const MyBlogCard = ({ blog,onDelete }:MyBlogCardProps) => {
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="#" className="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-gray-700/50">
+                                        <Link to={`/blogs/${blog.id}`} className="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-gray-700/50"
+                                        onClick={() => setIsMenuOpen(false)}>
                                             <ExternalLink className="w-4 h-4 mr-2" /> View
-                                        </a>
+                                        </Link>
                                     </li>
                                     <li>
                                         <button 

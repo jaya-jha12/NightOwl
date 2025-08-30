@@ -9,6 +9,7 @@ import { Write } from './pages/Write';
 import { Toaster } from "react-hot-toast"; 
 import { MyBlogs } from './pages/MyBlog';
 import { Auth } from './pages/Auth';
+import { ViewPage } from './pages/ViewPage';
 
 function App() {
 
@@ -21,10 +22,11 @@ function App() {
           <Route path="/write" element={<Write />} />
           <Route path="/blogs" element={<MyBlogs totalArticles={10} published={7} drafts={3} totalViews={1200}/>} />
           <Route path="/login" element={<Auth />} />
+          <Route path="/blogs/:id" element={<ViewPage />} />
         </Routes>
       <Toaster position="bottom-right" reverseOrder={false} />
     </div>
-    </BrowserRouter>
+    </BrowserRouter> 
   )
 }
 

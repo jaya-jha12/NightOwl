@@ -89,4 +89,22 @@ export const getBlogs = async (req, res) => {
   }
 };
 
+export const getBlogById=async (req,res)=>{
+ try {
+    const blogId = parseInt(req.params.id, 10);
+
+    const blog = await prisma.blog.findUnique({
+      where: { id: blogId },
+    });
+
+    if (!blog) {
+      return res.status(404).json({ message: "Blog not found" });
+    }
+
+    res.json(blog);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+}
 

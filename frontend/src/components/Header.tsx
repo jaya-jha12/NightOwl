@@ -35,7 +35,7 @@ export const Header = () => {
   };
 
   return (
-    <header className="fixed bg-[#0d0d0d] text-white px-6 py-4 flex items-center justify-between shadow-lg border-b border-zinc-800 w-full z-30">
+    <header className=" bg-[#0d0d0d] text-white px-6 py-4 flex items-center justify-between shadow-lg border-b border-zinc-800 w-full z-30">
       {/* Left: Logo + Brand */}
       <div className="flex items-center space-x-2">
         <img
