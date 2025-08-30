@@ -37,6 +37,10 @@ export const MyBlogs: React.FC<BlogStats> = () => {
     const [loading, setLoading] = useState(true);
     const [stats, setStats] = useState({ totalArticles: 0, published: 0, drafts: 0, totalViews: 0 });
     const [error,setError]=useState(null);
+    const [title, setTitle] = useState("");
+    const [content, setContent] = useState("");
+    const [tags, setTags] = useState("");
+    const [category, setCategory] = useState("");
     const navigate=useNavigate();
     const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         setQuery(e.target.value);
@@ -62,12 +66,6 @@ export const MyBlogs: React.FC<BlogStats> = () => {
             }));
             setBlogs(transformedBlogs);
             console.log(transformedBlogs);
-            const totalArticles = transformedBlogs.length;
-            const published = transformedBlogs.filter(b => b.status === "Published").length;
-            const drafts = transformedBlogs.filter(b => b.status === "Draft").length;
-            const totalViews = transformedBlogs.reduce((acc, b) => acc + (b.views || 0), 0);
-
-            setStats({ totalArticles, published, drafts, totalViews });
         } catch (err) {
             console.error(err);
         } finally {
@@ -76,9 +74,18 @@ export const MyBlogs: React.FC<BlogStats> = () => {
         };
         fetchBlogs();
     }, []);
+    useEffect(() => {
+        const totalArticles = blogs.length;
+        const published = blogs.filter(b => b.status === "Published").length;
+        const drafts = blogs.filter(b => b.status === "Draft").length;
+        const totalViews = blogs.reduce((acc, b) => acc + (b.views || 0), 0);
+        setStats({ totalArticles, published, drafts, totalViews });
+    }, [blogs]);
+
     const filteredBlogs = blogs.filter(blog =>
         blog.title.toLowerCase().includes(query.toLowerCase())
     );
+
     const handleDeleteBlog = async (id: number) => {
         // Optional: Ask for confirmation before deleting
         if (!window.confirm('Are you sure you want to delete this blog post?')) {
@@ -90,7 +97,6 @@ export const MyBlogs: React.FC<BlogStats> = () => {
 
         try {
             const token=localStorage.getItem("token");
-
             const response = await axios.delete(`http://localhost:3000/api/blog/${id}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -106,6 +112,9 @@ export const MyBlogs: React.FC<BlogStats> = () => {
         } finally {
             setLoading(false);
         }
+    };
+    const handleEditBlog = async (id: number) => {
+        navigate(`/write`,{ state: { id: id } });
     };
 
     return (
@@ -140,7 +149,7 @@ export const MyBlogs: React.FC<BlogStats> = () => {
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
                 {filteredBlogs.map((blog:any) => (
-                    <MyBlogCard key={blog.id} blog={blog} onDelete={handleDeleteBlog}/>
+                    <MyBlogCard key={blog.id} blog={blog} onDelete={handleDeleteBlog} onEdit={handleEditBlog}/>
                 ))}
                 </div>
             )}

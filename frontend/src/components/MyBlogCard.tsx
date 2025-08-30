@@ -41,9 +41,10 @@ const images: Array<string>=[
 type MyBlogCardProps = {
   blog: Blog;
   onDelete: (id: number) => void; // Function to handle deletion
+  onEdit: (id: number) => void;
 };
 
-export const MyBlogCard = ({ blog,onDelete }:MyBlogCardProps) => {
+export const MyBlogCard = ({ blog,onDelete,onEdit }:MyBlogCardProps) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const randomImage = useMemo(() => {
         const index = getRandomIndex(images);
@@ -95,9 +96,10 @@ export const MyBlogCard = ({ blog,onDelete }:MyBlogCardProps) => {
                             <div className="absolute right-0 top-8 mt-1 w-40 bg-[#2a2a2a] border border-gray-700/50 rounded-lg shadow-xl z-10">
                                 <ul className="py-1">
                                     <li>
-                                        <a href="#" className="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-gray-700/50">
+                                        <button className="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-gray-700/50 w-full"
+                                        onClick={() => onEdit(blog.id)}>
                                             <Edit className="w-4 h-4 mr-2" /> Edit
-                                        </a>
+                                        </button>
                                     </li>
                                     <li>
                                         <Link to={`/blogs/${blog.id}`} className="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-gray-700/50"

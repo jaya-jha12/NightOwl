@@ -1,45 +1,83 @@
 import { Calendar,User,Save, Send,Tag,PenTool, Eye } from "lucide-react";
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { toast } from "react-hot-toast";
 import axios from 'axios';
+//import { useParams, useNavigate } from 'react-router-dom';
 
 export const Write=()=>{
+    const location = useLocation();
+    const id = location.state?.id;
     const today = new Date().toLocaleDateString();
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
     const [tags, setTags] = useState("");
     const [category, setCategory] = useState("");
     const [activeTab, setActiveTab] = useState("write");
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
     const previewContent = content || "Start writing to see your preview...";
     const tagList = tags
         .split(",")
         .map((tag) => tag.trim())
         .filter((tag) => tag.length > 0);
 
+    useEffect(() => {
+        if (id) {
+            setLoading(true);
+            const fetchBlogForEdit = async () => {
+                try {
+                    const token = localStorage.getItem("token");
+                    const res = await axios.get(`http://localhost:3000/api/blog/${id}`, {
+                        headers: { Authorization: `Bearer ${token}` }
+                    });
+                    setTitle(res.data.title);
+                    setContent(res.data.content);
+                    setCategory(res.data.category || ""); 
+
+                } catch (err) {
+                    console.error("Failed to fetch blog for editing:", err);
+                    toast.error("Could not load blog post.");
+                    setError("Failed to load content.");
+                } finally {
+                    setLoading(false);
+                }
+            };
+            fetchBlogForEdit();
+        }
+    }, [id]);
     const handleSaveDraft = async () => {
+        const blogData = { title, content, category, draft: true };
+        const token = localStorage.getItem("token");
         try {
-            const token = localStorage.getItem("token");
-            await axios.post(
-            "http://localhost:3000/api/blog/create",
-            {
-                title,
-                content,
-                draft: true,
-                category,
-            },
-            {
-                headers: {
-                Authorization: `Bearer ${token}`,
-                },
+            if (id) {
+                await axios.put(`http://localhost:3000/api/blog/${id}`, blogData, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                toast.success("Draft updated successfully! ✨", {
+                    duration: 3000,
+                    style: {
+                        background: "#333",
+                        color: "#0f0", // green text
+                    },
+                });
+            }else{
+                await axios.post(
+                "http://localhost:3000/api/blog/create",blogData,
+                {
+                    headers: {
+                    Authorization: `Bearer ${token}`,
+                    },
+                }
+                );
+                toast.success("Draft saved! ✨", {
+                    duration: 3000,
+                    style: {
+                        background: "#333",
+                        color: "#0f0", // green text
+                    },
+                });
             }
-            );
-            toast.success("Draft saved! ✨", {
-                duration: 3000,
-                style: {
-                    background: "#333",
-                    color: "#0f0", // green text
-                },
-            });
             setTitle("");
             setContent("");
             setCategory("");
@@ -53,30 +91,46 @@ export const Write=()=>{
         
     };
     const handlePublish = async () => {
-    try {
+    const blogData = { title, content, category, draft: false };
         const token = localStorage.getItem("token");
-        await axios.post(
-        "http://localhost:3000/api/blog/create",
-        {
-            title,
-            content,
-            category,
-            draft: false,
-        },
-        {
-            headers: { Authorization: `Bearer ${token}` },
-        }
-        );
-        toast.success("Blog published successfully 🎉");
-        // reset form fields
-        setTitle("");
-        setContent("");
-        setCategory("");
-        setTags("");
-    } catch (error:any) {
+        try {
+            if (id) {
+                await axios.put(`http://localhost:3000/api/blog/${id}`, blogData, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                toast.success("Blog updated and published successfully! ✨", {
+                    duration: 3000,
+                    style: {
+                        background: "#333",
+                        color: "#0f0", // green text
+                    },
+                });
+            }else{
+                await axios.post(
+                "http://localhost:3000/api/blog/create",blogData,
+                {
+                    headers: {
+                    Authorization: `Bearer ${token}`,
+                    },
+                }
+                );
+                toast.success("Blog published! ✨", {
+                    duration: 3000,
+                    style: {
+                        background: "#333",
+                        color: "#0f0", // green text
+                    },
+                });
+            }
+            setTitle("");
+            setContent("");
+            setCategory("");
+            setTags("");
+        } catch (error:any) {
             const errMsg =
-            error.response?.data?.message || "Failed to publish blog. Please try again.";
+            error.response?.data?.message || "Failed to save draft. Please try again.";
             toast.error(errMsg);
+            console.error(error);
         }
     };
     return ( <div className=" bg-black text-white flex">
