@@ -59,7 +59,7 @@ export const Auth:FC=()=>{
         setIsLoading(true);
         if(activeTab=="signup"){
             try{
-                const response=await axios.post(`http://localhost:3000/api/user/register`,{
+                const response=await axios.post(`https://nightowl-twys.onrender.com/api/user/register`,{
                     name:name,
                     email:email,
                     password:password,
@@ -82,7 +82,7 @@ export const Auth:FC=()=>{
             }
         }else{
             try{
-                const response=await axios.post(`http://localhost:3000/api/user/login`,{
+                const response=await axios.post(`https://nightowl-twys.onrender.com/api/user/login`,{
                     email:email,
                     password:password
                 })

@@ -46,7 +46,7 @@ export const MyBlogs: React.FC<BlogStats> = () => {
         const fetchBlogs = async () => {
         try {
             const token = localStorage.getItem("token"); // you store token after login
-            const res = await axios.get("http://localhost:3000/api/blog/", {
+            const res = await axios.get("https://nightowl-twys.onrender.com/api/blog/", {
             headers: { Authorization: `Bearer ${token}` }
             });
             const transformedBlogs: Blog[] = res.data.map((blog: any) => ({
@@ -93,7 +93,7 @@ export const MyBlogs: React.FC<BlogStats> = () => {
 
         try {
             const token=localStorage.getItem("token");
-            await axios.delete(`http://localhost:3000/api/blog/${id}`, {
+            await axios.delete(`https://nightowl-twys.onrender.com/api/blog/${id}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 },

@@ -43,7 +43,7 @@ export const ViewPage:React.FC =()=>{
             setError(null);
 
             if (id) {
-            const response = await axios.get(`http://localhost:3000/api/blog/${id}`, {
+            const response = await axios.get(`https://nightowl-twys.onrender.com/api/blog/${id}`, {
                 headers:{ Authorization: `Bearer ${token}` }
             });
             const rawBlog = response.data;

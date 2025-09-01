@@ -28,7 +28,7 @@ export const Write=()=>{
             const fetchBlogForEdit = async () => {
                 try {
                     const token = localStorage.getItem("token");
-                    const res = await axios.get(`http://localhost:3000/api/blog/${id}`, {
+                    const res = await axios.get(`https://nightowl-twys.onrender.com/api/blog/${id}`, {
                         headers: { Authorization: `Bearer ${token}` }
                     });
                     setTitle(res.data.title);
@@ -51,7 +51,7 @@ export const Write=()=>{
         const token = localStorage.getItem("token");
         try {
             if (id) {
-                await axios.put(`http://localhost:3000/api/blog/${id}`, blogData, {
+                await axios.put(`https://nightowl-twys.onrender.com/api/blog/${id}`, blogData, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 toast.success("Draft updated successfully! ✨", {
@@ -63,7 +63,7 @@ export const Write=()=>{
                 });
             }else{
                 await axios.post(
-                "http://localhost:3000/api/blog/create",blogData,
+                "https://nightowl-twys.onrender.com/api/blog/create",blogData,
                 {
                     headers: {
                     Authorization: `Bearer ${token}`,
@@ -95,7 +95,7 @@ export const Write=()=>{
         const token = localStorage.getItem("token");
         try {
             if (id) {
-                await axios.put(`http://localhost:3000/api/blog/${id}`, blogData, {
+                await axios.put(`https://nightowl-twys.onrender.com/api/blog/${id}`, blogData, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 toast.success("Blog updated and published successfully! ✨", {
@@ -107,7 +107,7 @@ export const Write=()=>{
                 });
             }else{
                 await axios.post(
-                "http://localhost:3000/api/blog/create",blogData,
+                "https://nightowl-twys.onrender.com/api/blog/create",blogData,
                 {
                     headers: {
                     Authorization: `Bearer ${token}`,
