@@ -6,10 +6,14 @@ dotenv.config();
 
 const app=express();
 app.use(cors({
-  origin: "http://localhost:5173", // allow requests from Vite frontend
+  origin: [
+    "http://localhost:5173",  
+    "https://night-owl-six.vercel.app" 
+  ],
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
 }));
+
 app.use(express.json());
 
 app.use('/api',mainRouter);
