@@ -159,7 +159,10 @@ export const MyBlogCard = ({ blog,onDelete,onEdit }:MyBlogCardProps) => {
                             </span>
                         </div>
                     ) : (
-                        <button className="w-full bg-gray-700/50 hover:bg-gray-600/50 text-white font-semibold py-2 px-4 rounded-lg flex items-center justify-center transition-colors">
+                        <button className="w-full bg-gray-700/50 hover:bg-gray-600/50 text-white font-semibold py-2 px-4 rounded-lg flex items-center justify-center transition-colors"
+                        onClick={() => {
+                            onEdit(blog.id);
+                            }}>
                             <Edit className="w-4 h-4 mr-2" />
                             Continue Writing
                         </button>
